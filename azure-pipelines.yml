@@ -18,7 +18,8 @@ steps:
     displayName: Clear nuget package cache
     inputs:
       command: custom
-      custom: nuget locals all --clear
+      custom: nuget locals
+      arguments: all --clear
 
   # Delete any previous nuget packages so they don't get copied to artifacts directory again
   - task: DeleteFiles@1
