@@ -67,7 +67,7 @@ steps:
 
   # Push nuget package
   - task: NuGetCommand@2
-    displayName: 'Push to EWS Nuget Server'
+    displayName: 'Push to Nuget'
     inputs:
       command: push
       packagesToPush: $(Build.ArtifactStagingDirectory)/**/*.nupkg
