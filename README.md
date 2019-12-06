@@ -1,4 +1,4 @@
-# GWSClient
+# GWSClient [![Build Status](https://dev.azure.com/uwit-ews/WS/_apis/build/status/uwwebservices.GWSClient?branchName=master)](https://dev.azure.com/uwit-ews/WS/_build/latest?definitionId=62&branchName=master)
 
 A .NET Core client for interacting with UW's Group Web Service (GWS).
 
