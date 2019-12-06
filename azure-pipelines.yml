@@ -59,14 +59,20 @@ steps:
       TargetFolder: $(Build.ArtifactStagingDirectory)
       flattenFolders: true
 
+  # Install Nuget
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet Version: '
+    inputs:
+      versionSpec: 4.9.2
+
   # Push nuget package
-  - task: DotNetCoreCLI@2
-    displayName: Push to Nuget
+  - task: NuGetCommand@2
+    displayName: 'Push to EWS Nuget Server'
     inputs:
       command: push
       packagesToPush: $(Build.ArtifactStagingDirectory)/**/*.nupkg
-      publishFeedCredentials: 'Nuget.org (uwwebservices organization)'
       nuGetFeedType: external
+      publishFeedCredentials: 'Nuget.org (uwwebservices organization)'
     condition: eq(variables['Build.SourceBranchName'], 'master')
   
   # Delete nuget packages so they don't get included in web deployment packages that get created in the same artifactStagingDirectory
