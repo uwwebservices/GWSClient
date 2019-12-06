@@ -63,37 +63,6 @@
             like deleting or fetching many groups.
             </summary>
         </member>
-        <member name="M:UW.Web.Services.GWSClient.WindowsX509CertUtils.GetCertFromLocalMachine(System.String)">
-            <summary>
-            Get the X509 cert with a specified common name from the local machine's certificate store.
-            </summary>
-            <param name="certCommonName">the common name of the certificate to get</param>
-            <returns>the first valid certificate, or null if not found</returns>
-            <exception cref="T:UW.Web.Services.GWSClient.CertPrivateKeyInaccessibleException">if the certificate private key was not accessible</exception>
-            <exception cref="T:System.ArgumentException">if the cert common name is null or empty</exception>
-        </member>
-        <member name="M:UW.Web.Services.GWSClient.WindowsX509CertUtils.IsCurrent(System.Security.Cryptography.X509Certificates.X509Certificate2)">
-            <summary>
-            Determine whether or not a certificate's certificate is valid.
-            </summary>
-            <param name="cert">the certificate to check</param>
-            <returns>true if it is, false otherwise</returns>
-        </member>
-        <member name="M:UW.Web.Services.GWSClient.WindowsX509CertUtils.GetCertCommonName(System.String)">
-            <summary>
-            Parse the common name out of the certificate subject.
-            </summary>
-            <param name="certSubjectName">the certificate subject</param>
-            <returns>the common name</returns>
-        </member>
-        <member name="T:UW.Web.Services.GWSClient.CertPrivateKeyInaccessibleException">
-            <summary>
-            Thrown if a certificate's private key is inaccessible. This is often a result of the user needing
-            to access the X.509 client certificate having insufficient permissions. Give the user
-            'Full Control' access to the files containing the keys the WSE will need to retrieve in the
-            following folder: C:\Documents and Settings\All Users\Application Data\Microsoft\Crypto\RSA\MachineKeys
-            </summary>
-        </member>
         <member name="M:UW.Web.Services.GWSClient.IGWSClient.Search(UW.Web.Services.GWSClient.Models.SearchRequest,System.Threading.CancellationToken)">
             <summary>
             Searches GroupsWS for groups starting with the provided stemId and depth
@@ -538,22 +507,22 @@
             <summary>Provides access to the git information for the current assembly.</summary>
         </member>
         <member name="F:ThisAssembly.Git.IsDirty">
-            <summary>IsDirty: true</summary>
+            <summary>IsDirty: false</summary>
         </member>
         <member name="F:ThisAssembly.Git.IsDirtyString">
-            <summary>IsDirtyString: true</summary>
+            <summary>IsDirtyString: false</summary>
         </member>
         <member name="F:ThisAssembly.Git.Branch">
             <summary>Branch: master</summary>
         </member>
         <member name="F:ThisAssembly.Git.Commit">
-            <summary>Commit: bf4b73b</summary>
+            <summary>Commit: c61e7ff</summary>
         </member>
         <member name="F:ThisAssembly.Git.Sha">
-            <summary>Sha: bf4b73b2734a452bb7435735fd7be72a528059df</summary>
+            <summary>Sha: c61e7ff2f750fbca0fc1cb9fee079a2642e64b48</summary>
         </member>
         <member name="F:ThisAssembly.Git.Commits">
-            <summary>Commits on top of base version: 40</summary>
+            <summary>Commits on top of base version: 1</summary>
         </member>
         <member name="F:ThisAssembly.Git.Tag">
             <summary>Tag: </summary>
@@ -583,7 +552,7 @@
             <summary>Minor: 0</summary>
         </member>
         <member name="F:ThisAssembly.Git.SemVer.Patch">
-            <summary>Patch: 40</summary>
+            <summary>Patch: 1</summary>
         </member>
         <member name="F:ThisAssembly.Git.SemVer.Label">
             <summary>Label: </summary>
