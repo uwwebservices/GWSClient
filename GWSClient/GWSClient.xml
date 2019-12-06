@@ -1,0 +1,598 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GWSClient</name>
+    </assembly>
+    <members>
+        <member name="T:UW.Web.Services.GWSClient.Install">
+            <summary>
+            Extension so that it's easy to add the GWSClient to your project's Startup class:
+            Install.GWSClient();
+            </summary>
+        </member>
+        <member name="T:UW.Web.Services.GWSClient.GWSException">
+            <summary>
+            The root GWSException, all exceptions custom to the GWSClient derive from this.
+            </summary>
+        </member>
+        <member name="T:UW.Web.Services.GWSClient.GWSUnreachableException">
+            <summary>
+            An exception that indicates we tried calling GWS several times but could
+            not get a response back.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.GWSClientOptions.CertificateName">
+            <summary>
+            The name of the X509 client certificate 
+            to use when calling the Group Web Service.
+            Only use this if running on Windows and the
+            certificate is installed on your machine.
+            Otherwise use the CertificatePath/CertificatePathPassword combination.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.GWSClientOptions.CertificateFile">
+            <summary>
+            The fully-qualified path of the X509 client certificate
+            to use when calling the Group Web Service.
+            Use this if running in non-Windows environments
+            or the certificate is not installed on your Windows machine.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.GWSClientOptions.CertificateFilePassword">
+            <summary>
+            The X509 client certificate's password.
+            Only use this if your repository is private.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.GWSClientOptions.CertificateFilePasswordEnvKey">
+            <summary>
+            The environment variable containing your
+            X509 client certificate's password.
+            Prefer this.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.GWSClientOptions.Url">
+            <summary>
+            The base url for the Group Web Service.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.GWSClientOptions.MaxGWSBatchSize">
+            <summary>
+            The maximum number of calls to send to the
+            Group Web Service as part of a single action,
+            like deleting or fetching many groups.
+            </summary>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.WindowsX509CertUtils.GetCertFromLocalMachine(System.String)">
+            <summary>
+            Get the X509 cert with a specified common name from the local machine's certificate store.
+            </summary>
+            <param name="certCommonName">the common name of the certificate to get</param>
+            <returns>the first valid certificate, or null if not found</returns>
+            <exception cref="T:UW.Web.Services.GWSClient.CertPrivateKeyInaccessibleException">if the certificate private key was not accessible</exception>
+            <exception cref="T:System.ArgumentException">if the cert common name is null or empty</exception>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.WindowsX509CertUtils.IsCurrent(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+            <summary>
+            Determine whether or not a certificate's certificate is valid.
+            </summary>
+            <param name="cert">the certificate to check</param>
+            <returns>true if it is, false otherwise</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.WindowsX509CertUtils.GetCertCommonName(System.String)">
+            <summary>
+            Parse the common name out of the certificate subject.
+            </summary>
+            <param name="certSubjectName">the certificate subject</param>
+            <returns>the common name</returns>
+        </member>
+        <member name="T:UW.Web.Services.GWSClient.CertPrivateKeyInaccessibleException">
+            <summary>
+            Thrown if a certificate's private key is inaccessible. This is often a result of the user needing
+            to access the X.509 client certificate having insufficient permissions. Give the user
+            'Full Control' access to the files containing the keys the WSE will need to retrieve in the
+            following folder: C:\Documents and Settings\All Users\Application Data\Microsoft\Crypto\RSA\MachineKeys
+            </summary>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.Search(UW.Web.Services.GWSClient.Models.SearchRequest,System.Threading.CancellationToken)">
+            <summary>
+            Searches GroupsWS for groups starting with the provided stemId and depth
+            </summary>
+            <param name="request"></param>
+            <returns>A list of groups found matching the stemId</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.ReplaceMembers(UW.Web.Services.GWSClient.Models.ReplaceMembersRequest,System.Threading.CancellationToken)">
+            <summary>
+            Replace group members with member list (one memberType at at a time)
+            </summary>
+            <param name="req">ReplaceMembersRequest object.</param>
+            <returns>A flag representing if members were successfully replaced</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.AddMembers(UW.Web.Services.GWSClient.Models.AddMembersRequest,System.Threading.CancellationToken)">
+            <summary>
+            Add multiple members to a group
+            </summary>
+            <param name="req">AddMembersRequest object.</param>
+            <returns>A flag representing if members were successfully added</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.AddMember(UW.Web.Services.GWSClient.Models.AddMemberRequest,System.Threading.CancellationToken)">
+            <summary>
+            Add one member to a group
+            </summary>
+            <param name="req">AddMemberRequest object.</param>
+            <returns>A flag representing if the action was completed successfully</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.GetInfo(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Lookup groups in GroupsWS for additional information.
+            </summary>
+            <param name="group">The group to lookup</param>
+            <param name="cancellationToken"></param>
+            <returns>A list of groups found with additional information</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.GetInfo(UW.Web.Services.GWSClient.Models.GetInfosRequest,System.Threading.CancellationToken)">
+            <summary>
+            Lookup groups in GroupsWS for additional information.
+            </summary>
+            <param name="req">GetInfoRequest object</param>
+            <param name="cancellationToken"></param>
+            <returns>A list of groups found with additional information</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.GetHistory(UW.Web.Services.GWSClient.Models.UWGroup,System.Threading.CancellationToken)">
+            <summary>
+            Get history data for a specific group
+            </summary>
+            <param name="group">The group for which to get history</param>
+            <param name="cancellationToken"></param>
+            <returns>The group history</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.Delete(System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Delete groups in GroupsWS
+            </summary>
+            <param name="group">Group to delete.</param>
+            <param name="synchronized">Wait until the group has been fully deleted before returning? (default: true)</param>
+            <returns>A list of groups deleted in GroupsWS</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.Delete(UW.Web.Services.GWSClient.Models.DeleteGroupsRequest,System.Threading.CancellationToken)">
+            <summary>
+            Delete groups in GroupsWS
+            </summary>
+            <param name="req">DeleteGroupsRequest object.</param>
+            <returns>A list of groups deleted in GroupsWS</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.Create(UW.Web.Services.GWSClient.Models.CreateGroupRequest,System.Threading.CancellationToken)">
+            <summary>
+            Create a new group
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.RemoveMembers(UW.Web.Services.GWSClient.Models.RemoveMembersRequest,System.Threading.CancellationToken)">
+            <summary>
+            Remove members from a group
+            </summary>
+            <param name="request"></param>
+            <returns>Removal results</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.GetMembers(UW.Web.Services.GWSClient.Models.GetMembersRequest,System.Threading.CancellationToken)">
+            <summary>
+            Get group direct members
+            </summary>
+            <param name="request"></param>
+            <param name="cancellationToken"></param>
+            <returns>A list of group members</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.IGWSClient.GetEffectiveMembers(UW.Web.Services.GWSClient.Models.GetMembersRequest,System.Threading.CancellationToken)">
+            <summary>
+            Get group effective members.
+            </summary>
+            <param name="request"></param>
+            <param name="cancellationToken"></param>
+            <returns>A list of effective group members.</returns>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.AddMemberRequest.Group">
+            <summary>
+            Group to add member to.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.AddMemberRequest.Member">
+            <summary>
+            Member to add to group.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.AddMemberRequest.Synchronized">
+            <summary>
+            Wait until the member has been added before returning? (default: false)
+            </summary>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Models.DeleteGroupResult.op_Implicit(UW.Web.Services.GWSClient.Models.DeleteGroupResult)~System.Boolean">
+            <summary>
+            Enable truthy comparisons.
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Models.GetEffectiveMembersResult.op_Implicit(UW.Web.Services.GWSClient.Models.GetEffectiveMembersResult)~System.Boolean">
+            <summary>
+            Enable truthy comparisons.
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Models.GetHistoryResult.op_Implicit(UW.Web.Services.GWSClient.Models.GetHistoryResult)~System.Boolean">
+            <summary>
+            Enable truthy comparisons.
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.GetMembersRequest.Group">
+            <summary>
+            UW Group 
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.GetMembersRequest.BypassCache">
+            <summary>
+            Handle request via the registry.
+            Default is false (handled by fast response cache)
+            </summary>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Models.GetMembersResult.op_Implicit(UW.Web.Services.GWSClient.Models.GetMembersResult)~System.Boolean">
+            <summary>
+            Enable truthy comparisons.
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.ReplaceMembersRequest.Group">
+            <summary>
+            Group to modify membership.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.ReplaceMembersRequest.Members">
+            <summary>
+            New membership.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.RegID">
+            <summary>
+            Unique, opaque idenfier for the group
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Id">
+            <summary>
+            ID of the group 
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.DisplayName">
+            <summary>
+            Descriptive name of the group
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Description">
+            <summary>
+            Group's description
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Created">
+            <summary>
+            Create timestamp (Unix Timestamp in milliseconds)
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.CreatedDateTime">
+            <summary>
+            Create DateTime
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.LastModified">
+            <summary>
+            Last modified timestamp (Unix Timestamp in milliseconds)
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.LastModifiedDateTime">
+            <summary>
+            Last Modified DateTime
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.LastMemberModified">
+            <summary>
+            Last member modified timestamp (Unix Timestamp in milliseconds)
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.LastMemberModifiedDateTime">
+            <summary>
+            Last Member Modified DateTime
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Contact">
+            <summary>
+            Contact person (uwnetid) for the group
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.AuthnFactor">
+            <summary>
+            Multi-factor authn required
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Classification">
+            <summary>
+            Classification of membership. u=unclassified, r=restricted, c=confidential, missing=no classification
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.DependsOn">
+            <summary>
+            Membership dependency group
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Gid">
+            <summary>
+            Unique int
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Affiliates">
+            <summary>
+            Affiliations for the group
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Admins">
+            <summary>
+            Entities with full group access
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Updaters">
+            <summary>
+            Entities who can edit membership
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Creators">
+            <summary>
+            Entities who can create sub-groups
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Readers">
+            <summary>
+            Entities who can read group membership
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Optins">
+            <summary>
+            Entities who can opt in to membership
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroup.Optouts">
+            <summary>
+            Entities who can opt out of membership
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.Affiliate.Name">
+            <summary>
+            Affiliate name
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.Affiliate.Status">
+            <summary>
+            Activation status
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.Affiliate.Senders">
+            <summary>
+            Authorized senders
+            </summary>
+        </member>
+        <member name="T:UW.Web.Services.GWSClient.Models.UWGroupEntityType">
+            <summary>
+            Type of group entity
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupEntity.EntityType">
+            <summary>
+            Type of group entity
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupEntity.Name">
+            <summary>
+            Display name of entity.
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupEntity.Id">
+            <summary>
+            If the type is 'set' the id is:
+              * all: any entity
+              * none: no entity
+              * uw: any UW member entity
+              * member: any member of the group
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupHistory.User">
+            <summary>
+            User who performed the action
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupHistory.ActAs">
+            <summary>
+            Act-as user, if user acting as another
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupHistory.Activity">
+            <summary>
+            Activity name
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupHistory.Description">
+            <summary>
+            Details of the event
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupHistory.Timestamp">
+            <summary>
+            Unix Timestamp in milliseconds
+            </summary>
+        </member>
+        <member name="T:UW.Web.Services.GWSClient.Models.UWGroupMemberType">
+            <summary>
+            Type of group member
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupMember.MemberType">
+            <summary>
+            Type of group member
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupMember.Id">
+            <summary>
+            Entity id of member
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWEffectiveGroupMember.MemberType">
+            <summary>
+            Type of group member
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWEffectiveGroupMember.Id">
+            <summary>
+            Entity id of member
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupReference.Id">
+            <summary>
+            Group ID
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupReference.Type">
+            <summary>
+            Type
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupReference.RegID">
+            <summary>
+            Group RegID
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupReference.Name">
+            <summary>
+            Group Display Name
+            </summary>
+        </member>
+        <member name="P:UW.Web.Services.GWSClient.Models.UWGroupReference.Description">
+            <summary>
+            Group Description
+            </summary>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Utils.WindowsX509CertUtils.GetCertFromLocalMachine(System.String)">
+            <summary>
+            Get the X509 cert with a specified common name from the local machine's certificate store.
+            </summary>
+            <param name="certCommonName">the common name of the certificate to get</param>
+            <returns>the first valid certificate, or null if not found</returns>
+            <exception cref="T:UW.Web.Services.GWSClient.Utils.CertPrivateKeyInaccessibleException">if the certificate private key was not accessible</exception>
+            <exception cref="T:System.ArgumentException">if the cert common name is null or empty</exception>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Utils.WindowsX509CertUtils.IsCurrent(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+            <summary>
+            Determine whether or not a certificate's certificate is valid.
+            </summary>
+            <param name="cert">the certificate to check</param>
+            <returns>true if it is, false otherwise</returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Utils.WindowsX509CertUtils.GetCertCommonName(System.String)">
+            <summary>
+            Parse the common name out of the certificate subject.
+            </summary>
+            <param name="certSubjectName">the certificate subject</param>
+            <returns>the common name</returns>
+        </member>
+        <member name="T:UW.Web.Services.GWSClient.Utils.CertPrivateKeyInaccessibleException">
+            <summary>
+            Thrown if a certificate's private key is inaccessible. This is often a result of the user needing
+            to access the X.509 client certificate having insufficient permissions. Give the user
+            'Full Control' access to the files containing the keys the WSE will need to retrieve in the
+            following folder: C:\Documents and Settings\All Users\Application Data\Microsoft\Crypto\RSA\MachineKeys
+            </summary>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Utils.ClientUtilities.GetDateTimeFromUnixTimestamp(System.Int64)">
+            <summary>
+            Convert a UNIX timestamp (ms) into a local DateTime object
+            </summary>
+            <param name="timestamp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Utils.Enums.TryStrictParse``1(System.String,``0@)">
+            <summary>
+            Performs a strict TryParse, failing if the resulting Enum variant is not a member of the target type.
+            This is the desired behavior of Enum.TryParse.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="val"></param>
+            <param name="res"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UW.Web.Services.GWSClient.Utils.Enums.TryStrictParse``1(System.Net.HttpStatusCode,``0@)">
+            <summary>
+            Specialized TryStrictParse for HttpStatusCodes.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="code"></param>
+            <param name="res"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThisAssembly">
+            <summary>Provides access to the current assembly information.</summary>
+        </member>
+        <member name="T:ThisAssembly.Git">
+            <summary>Provides access to the git information for the current assembly.</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.IsDirty">
+            <summary>IsDirty: true</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.IsDirtyString">
+            <summary>IsDirtyString: true</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.Branch">
+            <summary>Branch: master</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.Commit">
+            <summary>Commit: bf4b73b</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.Sha">
+            <summary>Sha: bf4b73b2734a452bb7435735fd7be72a528059df</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.Commits">
+            <summary>Commits on top of base version: 40</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.Tag">
+            <summary>Tag: </summary>
+        </member>
+        <member name="F:ThisAssembly.Git.BaseTag">
+            <summary>Base tag: </summary>
+        </member>
+        <member name="T:ThisAssembly.Git.BaseVersion">
+            <summary>Provides access to the base version information used to determine the <see cref="T:ThisAssembly.Git.SemVer" />.</summary>      
+        </member>
+        <member name="F:ThisAssembly.Git.BaseVersion.Major">
+            <summary>Major: 0</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.BaseVersion.Minor">
+            <summary>Minor: 0</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.BaseVersion.Patch">
+            <summary>Patch: 0</summary>
+        </member>
+        <member name="T:ThisAssembly.Git.SemVer">
+            <summary>Provides access to SemVer information for the current assembly.</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.SemVer.Major">
+            <summary>Major: 0</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.SemVer.Minor">
+            <summary>Minor: 0</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.SemVer.Patch">
+            <summary>Patch: 40</summary>
+        </member>
+        <member name="F:ThisAssembly.Git.SemVer.Label">
+            <summary>Label: </summary>
+        </member>
+        <member name="F:ThisAssembly.Git.SemVer.DashLabel">
+            <summary>Label with dash prefix: </summary>
+        </member>
+        <member name="F:ThisAssembly.Git.SemVer.Source">
+            <summary>Source: Default</summary>
+        </member>
+    </members>
+</doc>

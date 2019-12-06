@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GWSClient", "GWSClient\GWSClient.csproj", "{716D5BF9-878A-4594-B2B0-22D2F8D2D3E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepoItems", "RepoItems", "{811F51DF-7289-4084-998D-25A09152D851}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GWSClient.Test", "GWSClient.Test\GWSClient.Test.csproj", "{EA6BFC1F-D46B-4F3C-A705-075563DDD5DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{716D5BF9-878A-4594-B2B0-22D2F8D2D3E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{716D5BF9-878A-4594-B2B0-22D2F8D2D3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{716D5BF9-878A-4594-B2B0-22D2F8D2D3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{716D5BF9-878A-4594-B2B0-22D2F8D2D3E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA6BFC1F-D46B-4F3C-A705-075563DDD5DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA6BFC1F-D46B-4F3C-A705-075563DDD5DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA6BFC1F-D46B-4F3C-A705-075563DDD5DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA6BFC1F-D46B-4F3C-A705-075563DDD5DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3806BA6-E4FA-40E3-AED9-BF5B7560C07E}
+	EndGlobalSection
+EndGlobal

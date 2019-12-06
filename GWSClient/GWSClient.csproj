@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>UW.Web.Services.GWSClient</RootNamespace>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>UW-IT Enterprise Web Service and Events</Authors>
+    <Company>University of Washington</Company>
+    <Copyright>Copyright 2019</Copyright>
+    <PackageProjectUrl>https://github.com/uwwebservices/GWSClient</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/uwwebservices/GWSClient</RepositoryUrl>
+    <PackageTags>GWSClient</PackageTags>
+    <Deterministic>false</Deterministic>
+    <Description>A client for interacting with the UW Group Web Service (GWS)</Description>
+    <AssemblyName>GWSClient</AssemblyName>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>GWSClient.xml</DocumentationFile>
+    <DefineConstants>DEBUG</DefineConstants>
+    <NoWarn>CS1591</NoWarn>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>GWSClient.xml</DocumentationFile>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.0.21">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <Target Name="PostBuildMaster" AfterTargets="PostBuildEvent" Condition="$(GitBranch) == 'master' Or $(GitBranch) == 'remotes/origin/master'">
+    <Exec Command="dotnet pack --no-build --configuration $(Configuration)" />
+  </Target>
+</Project>
