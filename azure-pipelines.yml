@@ -17,8 +17,8 @@ steps:
   - task: DotNetCoreCLI@2
     displayName: Clear nuget package cache
     inputs:
-      command: nuget locals
-      arguments: all -clear
+      command: custom
+      custom: nuget locals all -clear
 
   # Delete any previous nuget packages so they don't get copied to artifacts directory again
   - task: DeleteFiles@1
