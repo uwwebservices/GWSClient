@@ -1,90 +1,76 @@
 pool:
     name: 'ECS Build Agents'
 
-parameters:
-  buildConfiguration: 'Release'
-  sourceBranchName: '$(Build.SourceBranchName)'
-  sourcesDirectory: '$(Build.SourcesDirectory)'
-  nugetVer: '$(NugetVersion)'
-  branchName: 'master'
-  artifactStagingDirectory: '$(Build.ArtifactStagingDirectory)'
-
 steps:
   # Generate our unique version number and use that for the BuildNumber so we make use of it in release pipelines
   - bash: |
       myVersion=1.0.`date +%y%j.%H%M`   
       echo "##vso[build.updatebuildnumber]$myVersion"
-    displayName: 'Set build number for GWSClient'
+    displayName: Set build number for GWSClient
  
   # Auto-increment the version number; specific to this project
   - bash: "setversion $(Build.BuildNumber) GWSClient/GWSClient.csproj"
-    displayName: 'Run setversion on GWSClient'
-    workingDirectory: '$(Build.SourcesDirectory)'
-
-  # Install nuget tools
-  - task: NuGetToolInstaller@0
-    displayName: 'Use NuGet Version: ${{ parameters.nugetVer }} '
-    inputs:
-      versionSpec: ${{ parameters.nugetVer }}
+    displayName: Run setversion on GWSClient
+    workingDirectory: $(Build.SourcesDirectory)
       
   # Clear nuget package cache
-  - task: NuGet@0
-    displayName: 'Clear nuget package cache'
+  - task: DotNetCoreCLI@2
+    displayName: Clear nuget package cache
     inputs:
-      command: 'locals'
-      arguments: 'all -clear'
+      command: custom
+      custom: nuget
+      arguments: locals all --clear
 
   # Delete any previous nuget packages so they don't get copied to artifacts directory again
   - task: DeleteFiles@1
-    displayName: 'Delete previous nuget packages from SourcesDirectory'
+    displayName: Delete previous nuget packages from SourcesDirectory
     inputs:
-      sourceFolder: '${{ parameters.sourcesDirectory }}'
+      sourceFolder: $(Build.SourcesDirectory)
       contents: '**/*.nupkg'
       
   # Build Solution
   - task: DotNetCoreCLI@2
-    displayName: 'Build Solution'
+    displayName: Build Solution
     inputs:      
       command: build
-      arguments: 'GWSClient.sln --configuration ${{ parameters.buildConfiguration }}'
+      arguments: GWSClient.sln --configuration Release
 
   # Run unit tests
   - task: DotNetCoreCLI@2
-    displayName: 'Run unit tests'
+    displayName: Run unit tests
     inputs:      
       command: test
       projects: '**/*Test.csproj'
-      arguments: '--filter TestCategory=UnitTest --logger "console;verbosity=diagnostic" --blame --no-build --configuration ${{ parameters.buildConfiguration }}'
+      arguments: --filter TestCategory=UnitTest --logger "console;verbosity=diagnostic" --blame --no-build --configuration Release
 
   # Delete any previous nuget packages so they don't get pushed again
   - task: DeleteFiles@1
-    displayName: 'Delete previous nuget packages'
+    displayName: Delete previous nuget packages
     inputs:
-      sourceFolder: '${{ parameters.artifactStagingDirectory }}'
+      sourceFolder: $(Build.ArtifactStagingDirectory)
       contents: '**/*.nupkg'
 
   # Copy the nuget package that was created in the PostBuild event
   - task: CopyFiles@2
-    displayName: 'Copy nuget packages to artifacts folder'
+    displayName: Copy nuget packages to artifacts folder
     inputs:
-      SourceFolder: '${{ parameters.sourcesDirectory }}'
+      SourceFolder: $(Build.SourcesDirectory)
       Contents: '**/*.nupkg'
-      TargetFolder: '${{ parameters.artifactStagingDirectory }}'
+      TargetFolder: $(Build.ArtifactStagingDirectory)
       flattenFolders: true
 
   # Push nuget package
-  - task: NuGetCommand@2
-    displayName: 'Push to Nuget'
+  - task: DotNetCoreCLI@2
+    displayName: Push to Nuget
     inputs:
       command: push
-      packagesToPush: '${{ parameters.artifactStagingDirectory }}/**/*.nupkg'
-      nuGetFeedType: external
+      packagesToPush: $(Build.ArtifactStagingDirectory)/**/*.nupkg
       publishFeedCredentials: 'Nuget.org (uwwebservices organization)'
-    condition: eq(variables['Build.SourceBranchName'], '${{ parameters.branchName }}')
+    condition: eq(variables['Build.SourceBranchName'], 'master')
   
   # Delete nuget packages so they don't get included in web deployment packages that get created in the same artifactStagingDirectory
   - task: DeleteFiles@1
-    displayName: 'Delete nuget packages we just pushed'
+    displayName: Delete nuget packages we just pushed
     inputs:
-      sourceFolder: '${{ parameters.artifactStagingDirectory }}'
+      sourceFolder: $(Build.ArtifactStagingDirectory)
       contents: '**/*.nupkg'
