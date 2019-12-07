@@ -8,6 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepoItems", "RepoItems", "{811F51DF-7289-4084-998D-25A09152D851}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
+		LICENSE = LICENSE
 		NuGet.Config = NuGet.Config
 		README.md = README.md
 	EndProjectSection
