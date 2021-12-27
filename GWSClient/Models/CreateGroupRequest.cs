@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,8 +27,13 @@ namespace UW.Web.Services.GWSClient.Models
 
     public enum GroupClassification : short
     {
+        [EnumMember(Value = "u")]
         Unclassified,
+        [EnumMember(Value = "r")]
         Restricted,
+        [EnumMember(Value = "c")]
         Confidential,
+        [EnumMember(Value = "p")]
+        Public,
     }
 }

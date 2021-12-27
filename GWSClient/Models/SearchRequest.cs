@@ -36,7 +36,7 @@ namespace UW.Web.Services.GWSClient.Models
                 }
             }
             kvps.Add(new KeyValuePair<string, string>("depth", Depth.ToString().ToLower()));
-            if (!Type.HasValue)
+            if (Type.HasValue)
             {
                 kvps.Add(new KeyValuePair<string, string>("type", Type.Value.ToString().ToLower()));
             }
